@@ -1,11 +1,11 @@
 # Site
-title: Hexo
+title: 水木子的写作空间
 subtitle: ''
 description: ''
 keywords:
-author: John Doe
+author: 水木子
 language: zh
-timezone: ''
+timezone: 'Asia/Shanghai'
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'

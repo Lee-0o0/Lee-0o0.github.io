@@ -216,14 +216,14 @@ colorSwitch:
   enable: true
 
 # 文章分享
-# postShare:
-#   enable: true
+postShare:
+  enable: false
 
-#   twitter:
-#     enable: true
+  twitter:
+    enable: true
 
-#   facebook:
-#     enable: true
+  facebook:
+    enable: true
 
 # 代码块配置
 codeBlock:
@@ -244,11 +244,11 @@ mathjax:
 # 也可使用自己的cdn服务，资源在/theme/oranges/source/plugins下
 cdns:
   jquery:
-    enable: false
+    enable: true
     url: https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js
 
   fancybox:
-    enable: false
+    enable: true
     url:
       css: https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css
       js: https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js

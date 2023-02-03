@@ -106,7 +106,7 @@ navbar:
     key: friends
   -
     name: 关于
-    enable: true
+    enable: false
     path: /about/
     key: about
 

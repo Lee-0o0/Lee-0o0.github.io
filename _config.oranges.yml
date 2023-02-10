@@ -100,10 +100,10 @@ navbar:
     path: /tags/
     key: tags
   -
-    name: 友链
-    enable: false
-    path: /friends/
-    key: friends
+    name: 计算机教程
+    enable: true
+    path: https://lee-0o0.github.io/doc-site/
+    key: tutorials
   -
     name: 关于
     enable: false

@@ -107,7 +107,7 @@ namespace TimerDemo
 
 效果：
 
-![img](img/Winform%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0ComboBox%E6%A8%A1%E7%B3%8A%E6%9F%A5%E8%AF%A2/261053162014804.png)
+![img](/img/Winform%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0ComboBox%E6%A8%A1%E7%B3%8A%E6%9F%A5%E8%AF%A2/261053162014804.png)
 
 实现过程中的问题：
 

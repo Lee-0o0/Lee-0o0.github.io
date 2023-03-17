@@ -11,7 +11,7 @@
   
   <title>
     
-      archive_a: 2023/2 
+      DataGridView:IndexOutOfRangeException 索引-1没有值 
       
       
       |
@@ -106,68 +106,202 @@
 
 
       <div class="flex-container">
-        <!-- 归档页，展示本站所有文章，按照年份降序归类，url形式：https://yoursite/archives/ -->
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
 
-<!-- last: 按年份把文章分组，当前遍历到的年份 -->
-<!-- now: 当前遍历到的文章的发布年份 -->
 
-<div class="container archives">
-  <div class="post-list">
-    
-        <!-- 后续文章的发布年份呈现 -->
-        <div class="content-title">
-          <h2>
-            <span>2023</span>
-          </h2>
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.10/dist/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">DataGridView:IndexOutOfRangeException 索引-1没有值</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2023-03-17 02:53:45
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="Categories"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/IT%E6%8A%80%E6%9C%AF/" title="IT技术">
+                    <b>#</b> IT技术
+                  </a>
+                </span>
+                
+              </span>
+          
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/C/" title="C#">
+                    #C#
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/WinForm/" title="WinForm">
+                    #WinForm
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/DataGridView/" title="DataGridView">
+                    #DataGridView
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/IT%E6%8A%80%E6%9C%AF/" title="IT技术">
+                    #IT技术
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/%E8%BD%AC%E8%BD%BD%E6%96%87%E7%AB%A0/" title="转载文章">
+                    #转载文章
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>本文系转载文章，原文作者信息：</p>
+<blockquote>
+<p>作者：<a target="_blank" rel="noopener" href="https://home.cnblogs.com/u/badtree/">BadTree</a></p>
+<p>出处：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/badtree/articles/1799170.html">https://www.cnblogs.com/badtree/articles/1799170.html</a></p>
+<p>本文版权归作者和博客园共有,欢迎转载,但未经作者同意必须保留此段声明,且在文章页面明显位置给出原文链接。</p>
+</blockquote>
+<p>很多WinForm的开发人员在<code>DataGridView</code>的开发当中，都会出现<span style="color:red">“ 索引-1没有值 ”</span>这个烦人的问题，其实较早之前，我已经大概知道问题的所在，也找到了解决方法，不过一直没有时间去深入研究一下，今日做了一个测试，发现了问题的所在，我不知道这个问题是否应为MS的BUG，但至少我个人认为这个问题不应该出现！</p>
+<p>下面先说说构成这个错误的现象。</p>
+<p>首先出现这个错误，绝大多数的开发人员都是在进行数据绑定之后出现的，而且出现的情况基本上都只是一种，就是开始绑定的数据集是非空的，但数据集的 Count=0，在将这个非空的而元素个数为0的数据集绑定到<code>DataGridView</code>后，当更新<code>DataGridView</code>的数据源，即将一个元素个数大于0的数据集绑定给<code>DataGridView</code>后，<code>DataGridView</code>仍能正常显示，以上还是正常的，但问题就出在，当你用鼠标点击<code>DataGridView</code>后，<span style="color:red">“ 索引-1没有值 ”</span>这个恼人的错误就会出现。</p>
+<p>其实以上的文字基本上已经让你知道问题的所在，就是第一次绑定的“非空的且元素个数为0的数据集”，经运行时查看对象属性，由于只要数据集不为空，<code>DataGirdView</code>就必需指定当前单元格（CurrentCell），但“非空但大小为零的数据集”的CurrentCell是为null，致使后来更新数据集后，这个CurrentCell仍不会变，因为你的数据集没有改变，只是数据集的数目改变了，所以CurrentCell不变，所以当你点击鼠标进去后，返回的当前行就出错了！</p>
+<p>解决的方法很简单，</p>
+<ul>
+<li><p>第一，绑定数据集时，判断数据集是否为空，是否元素个数大于0，如果符合条件的才将数据集绑定；</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (dataSource != <span class="literal">null</span> &amp;&amp; dataSource.Count &gt; <span class="number">0</span>) </span><br><span class="line">&#123;</span><br><span class="line">    dataGridView1.DataSource = dataSource; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>第二，如果已经绑定了，可以判断当前数据集的元素个数是否为0，如果大于0则设置CurrentCell；</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (dataGridView1.Rows.Count &gt; <span class="number">0</span>) </span><br><span class="line">&#123; </span><br><span class="line">    dataGridView1.CurrentCell = dataGridView1.Rows[<span class="number">0</span>].Cells[<span class="number">1</span>]; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>顺带一提，设置时，CurrentCell对应的列，必需为可视的。</p>
+</li>
+</ul>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/RDLC%E6%8A%A5%E8%A1%A8%E6%89%93%E5%8D%B0%E5%B7%A5%E5%85%B7%E7%B1%BB/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2023-03-17 02:53:45
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="Categories"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/IT%E6%8A%80%E6%9C%AF/" title="IT技术">
+                        <b>#</b> IT技术
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/C/" title="C#">
+                        #C#
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/WinForm/" title="WinForm">
+                        #WinForm
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/DataGridView/" title="DataGridView">
+                        #DataGridView
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/IT%E6%8A%80%E6%9C%AF/" title="IT技术">
+                        #IT技术
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/%E8%BD%AC%E8%BD%BD%E6%96%87%E7%AB%A0/" title="转载文章">
+                        #转载文章
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
       
-      <div class="post-item" title="DataGridView:IndexOutOfRangeException 索引-1没有值">
-        <div class="time-m-d">03-17</div>
-        <div class="title">
-          <a href="/DataGridView-IndexOutOfRangeException/">
-            <span>DataGridView:IndexOutOfRangeException 索引-1没有值</span>
-          </a>
-        </div>
-      </div>
+    </div>
     
-      <div class="post-item" title="RDLC报表打印工具类">
-        <div class="time-m-d">03-17</div>
-        <div class="title">
-          <a href="/RDLC%E6%8A%A5%E8%A1%A8%E6%89%93%E5%8D%B0%E5%B7%A5%E5%85%B7%E7%B1%BB/">
-            <span>RDLC报表打印工具类</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="WinForm如何实现ComboBox模糊查询">
-        <div class="time-m-d">02-16</div>
-        <div class="title">
-          <a href="/Winform%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0ComboBox%E6%A8%A1%E7%B3%8A%E6%9F%A5%E8%AF%A2/">
-            <span>WinForm如何实现ComboBox模糊查询</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="MyBatis-SQL获取方法参数详解">
-        <div class="time-m-d">02-07</div>
-        <div class="title">
-          <a href="/MyBatis-SQL%E8%8E%B7%E5%8F%96%E6%96%B9%E6%B3%95%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3/">
-            <span>MyBatis-SQL获取方法参数详解</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Hexo建站教程">
-        <div class="time-m-d">02-01</div>
-        <div class="title">
-          <a href="/%E5%BB%BA%E7%AB%99%E6%95%99%E7%A8%8B/">
-            <span>Hexo建站教程</span>
-          </a>
-        </div>
-      </div>
+
     
   </div>
-</div>
+
 
         
 <div class="footer">

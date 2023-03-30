@@ -10,28 +10,29 @@ categories: ["IT技术"]
 ```c#
 public class ReportPrintHelper
 {
-    public static bool ExportEMF = false;
-
+    public static bool ExportEMF = true;
     private LocalReport report;
+    private bool landscape;
 
     private int m_currentPageIndex;
     private IList<Stream> m_streams;
 
+    private string paperName = "";
+    PrintDocument printDoc;
+
     public ReportPrintHelper()
     {
         report = new LocalReport();
+        printDoc = new PrintDocument();
     }
 
-
-    /// <summary>
-    /// 将指定路径的报表打印
-    /// </summary>
-    /// <param name="printerName">打印机名称</param>
-    /// <param name="reportPath">报表路径，以当前程序所在位置为基本路径</param>
-    /// <param name="deviceInfo">打印纸信息，可通过GetDeviceInfoUnitCM()方法获取</param>
-    /// <param name="dataSource">报表数据集</param>
-    /// <param name="reportParams">报表参数</param>
-    public void Run(string printerName, string reportPath, string deviceInfo, Dictionary<string, object> dataSource, Dictionary<string, object> reportParams)
+    public void Run(string paperName, 
+                    string printerName, 
+                    string reportPath, 
+                    string deviceInfo, 
+                    Dictionary<string, object> dataSource, 
+                    Dictionary<string, object> reportParams, 
+                    bool isLandscape = false)
     {
         if (string.IsNullOrEmpty(printerName))
             throw new Exception("Error: printer name is empty.");
@@ -40,6 +41,11 @@ public class ReportPrintHelper
         if (string.IsNullOrEmpty(deviceInfo))
             throw new Exception("Error:device info is empty");
 
+        this.paperName = "A4";
+        if (!string.IsNullOrEmpty(paperName))
+            this.paperName = paperName;
+
+        this.landscape = isLandscape;
         report.ReportPath = AppDomain.CurrentDomain.BaseDirectory + reportPath;
 
         if (dataSource != null)
@@ -63,16 +69,6 @@ public class ReportPrintHelper
     }
 
 
-    /// <summary>
-    /// 获取打印纸信息
-    /// </summary>
-    /// <param name="width">打印纸的宽（以厘米为单位）</param>
-    /// <param name="height">打印纸的高（以厘米为单位）</param>
-    /// <param name="marginLeft">打印纸的左边距（以厘米为单位）</param>
-    /// <param name="marginRight">打印纸的右边距（以厘米为单位）</param>
-    /// <param name="marginTop">打印纸的上边距（以厘米为单位）</param>
-    /// <param name="marginBottom">打印纸的下边距（以厘米为单位）</param>
-    /// <returns></returns>
     public static string GetDeviceInfoUnitCM(double width,
                                              double height,
                                              double marginLeft,
@@ -81,7 +77,7 @@ public class ReportPrintHelper
                                              double marginBottom)
     {
         return $@"<DeviceInfo>
-                        <OutputFormat>EMF</OutputFormat>
+                        <OutputFormat>PNG</OutputFormat>
                         <PageWidth>{width}cm</PageWidth>
                         <PageHeight>{height}cm</PageHeight>
                         <MarginTop>{marginTop}cm</MarginTop>
@@ -90,7 +86,6 @@ public class ReportPrintHelper
                         <MarginBottom>{marginBottom}cm</MarginBottom>
                     </DeviceInfo>";
     }
-
 
     private Stream CreateStream(string name,
                                 string fileNameExtension,
@@ -115,7 +110,7 @@ public class ReportPrintHelper
         return stream;
     }
 
-
+    
     private void Export(LocalReport report, string deviceInfo)
     {
         Warning[] warnings;
@@ -126,22 +121,25 @@ public class ReportPrintHelper
             stream.Position = 0;
     }
 
-
+    
     private void PrintPage(object sender, PrintPageEventArgs ev)
     {
-        Metafile pageImage = new Metafile(m_streams[m_currentPageIndex]);
-
+        //Metafile pageImage = new Metafile(m_streams[m_currentPageIndex]);
+        Bitmap pageImage = new Bitmap(m_streams[m_currentPageIndex]);
         // Adjust rectangular area with printer margins.
-        Rectangle adjustedRect = new Rectangle(ev.PageBounds.Left - (int)ev.PageSettings.HardMarginX,
-                                               ev.PageBounds.Top - (int)ev.PageSettings.HardMarginY,
-                                               ev.PageBounds.Width,
-                                               ev.PageBounds.Height);
+        Rectangle adjustedRect = new Rectangle(0,
+                                               0,
+                                               ev.PageSettings.Bounds.Width,
+                                               ev.PageSettings.Bounds.Height);
 
+        if (landscape)
+            pageImage.RotateFlip(RotateFlipType.Rotate90FlipNone);
 
         ev.Graphics.FillRectangle(Brushes.White, adjustedRect);
 
         // Draw the report content
         ev.Graphics.DrawImage(pageImage, adjustedRect);
+        //ev.Graphics.DrawRectangle(Pens.Red, adjustedRect);
 
         // Prepare for the next page. Make sure we haven't hit the end.
         m_currentPageIndex++;
@@ -153,13 +151,21 @@ public class ReportPrintHelper
         if (m_streams == null || m_streams.Count == 0)
             throw new Exception("Error: no stream to print.");
 
-        PrintDocument printDoc = new PrintDocument();
         if (!printDoc.PrinterSettings.IsValid)
         {
             throw new Exception("Error: cannot find the default printer.");
         }
 
         printDoc.PrinterSettings.PrinterName = printerName;
+        foreach(PaperSize paper in printDoc.PrinterSettings.PaperSizes)
+        {
+            if (this.paperName.Equals(paper.PaperName))
+            {
+                printDoc.DefaultPageSettings.PaperSize = paper;
+                printDoc.PrinterSettings.DefaultPageSettings.PaperSize = paper;
+            }
+        }
+
         printDoc.PrintPage += new PrintPageEventHandler(PrintPage);
         m_currentPageIndex = 0;
         printDoc.Print();
@@ -192,7 +198,7 @@ public class ReportPrintHelper
   ```c#
   ReportPrintHelper reportPrintHelper = new ReportPrintHelper();
   string deviceInfo = ReportPrintHelper.GetDeviceInfoUnitCM(29.7, 21, 0, 2, 0, 0);
-  reportPrintHelper.Run("Foxit PDF Reader Printer", "/Report/DemoReport.rdlc", deviceInfo, null, null);
+  reportPrintHelper.Run(null, "Foxit PDF Reader Printer", "/Report/DemoReport.rdlc", deviceInfo, null, null);
   ```
 
   打印效果：
